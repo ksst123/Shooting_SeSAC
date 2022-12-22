@@ -2,6 +2,7 @@
 
 
 #include "CodeTest.h"
+#include "PointerTest.h"
 
 // Sets default values
 ACodeTest::ACodeTest()
@@ -101,7 +102,7 @@ void ACodeTest::BeginPlay()
 
 	//UE_LOG(LogTemp, Error, TEXT("%s"), *GetFullName(string1, string2));
 
-	//
+	
 	//int32 checker = 30;
 	//// checker 변수의 값이 짝수라면 "even" 이라고 출력.
 	//// 그렇지 않고 홀수라면 "odd" 라고 출력.
@@ -118,8 +119,71 @@ void ACodeTest::BeginPlay()
 	//	UE_LOG(LogTemp, Warning, TEXT("odd"));
 	//}
 
+	/*MultiplicationTable();*/
 
-	MultiplicationTable();
+
+	/*for (int i = 0; i < ages.Num(); i++)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%d"), ages[i]);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Array length is : %d"), ages.Num());*/
+
+
+
+
+	/*distances.Add("Seoul", 250.5f);
+	distances.Add("Incheon", 325.3f);
+	distances.Add("Sungnam", 123.9f);
+	FString myKey = "Incheon";*/
+
+	// UE_LOG(LogTemp, Warning, TEXT("%s : %.1f"), *myKey, distances[myKey]);
+
+	/*for (auto dist : distances)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s : %f"), *dist.Key, dist.Value);
+	}*/
+
+
+	/*for (auto age : ages)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%d"), age);
+	}*/
+
+	/*int32 number1 = 10;
+	int32 copyNum = number1;
+	UE_LOG(LogTemp, Warning, TEXT("%d, %d"), number1, copyNum);
+	number1 = 30;
+	UE_LOG(LogTemp, Warning, TEXT("%d, %d"), number1, copyNum);*/
+
+	
+	/*int32 number1 = 10;
+	int32* copyNum = &number1;
+	number1 = 30;
+	UE_LOG(LogTemp, Warning, TEXT("%d, %d"), number1, *copyNum);
+	UE_LOG(LogTemp, Warning, TEXT("%d, %p"), number1, copyNum);
+	UE_LOG(LogTemp, Warning, TEXT("%p, %p"), &number1, copyNum);*/
+
+
+	/*int32 aa = 10;
+	int32 bb = 15;
+	int32 result_add;
+	result_add = Add(&aa, &bb);
+	UE_LOG(LogTemp, Warning, TEXT("aa : %d, bb : %d, result : %d"), aa, bb, result_add);
+	int32 result_sub;
+	result_sub = Sub(aa, bb);
+	UE_LOG(LogTemp, Warning, TEXT("aa : %d, bb : %d, result : %d"), aa, bb, result_sub);*/
+
+	/*for(APointerTest* pt : pointerTest)
+	{
+		pt->pt_number = 115;
+	}*/
+
+	if (pointerTest != nullptr)
+	{
+		*(pointerTest->myAge) = 15;
+		// pointerTest->realAge = 15;
+	}
 }
 
 void ACodeTest::MultiplicationTable()
@@ -142,12 +206,15 @@ void ACodeTest::Tick(float DeltaTime)
 
 }
 
-int32 ACodeTest::Add(int32 num1, int32 num2)
+int32 ACodeTest::Add(int32* num1, int32* num2)
 {
-	return num1 + num2;
+	*num1 *= 2;
+	*num2 *= 2;
+
+	return *num1 + *num2;
 }
 
-int32 ACodeTest::Sub(int32 num1, int32 num2)
+int32 ACodeTest::Sub(int32& num1, int32& num2)
 {
 	return num1 - num2;
 }

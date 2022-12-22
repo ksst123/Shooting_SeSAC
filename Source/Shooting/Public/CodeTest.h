@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+// #include "PointerTest.h"
+
 #include "CodeTest.generated.h"
+
+// class APointerTest*;
 
 UCLASS()
 class SHOOTING_API ACodeTest : public AActor
@@ -54,8 +58,8 @@ private:
 	bool isTeacher = true;
 
 	// 나이
-	UPROPERTY(EditAnywhere, Category=CodeVariable)
-	int32 age = 20;
+	/*UPROPERTY(EditAnywhere, Category=CodeVariable)
+	int32 age = 20;*/
 	// 키
 	UPROPERTY(EditAnywhere, Category=CodeVariable)
 	int32 height = 170;
@@ -64,9 +68,15 @@ private:
 	UPROPERTY(EditAnywhere, Category=CodeVariable)
 	FString nation = TEXT("한국");
 
+	UPROPERTY(EditAnywhere, Category = CodeVariable)
+	TArray<int32> ages;
+
+	UPROPERTY(EditAnywhere, Category = CodeVariable)
+	TMap<FString, float> distances;
+
 public:
-	int32 Add(int32 num1, int32 num2);
-	int32 Sub(int32 num1, int32 num2);
+	int32 Add(int32* num1, int32* num2);
+	int32 Sub(int32& num1, int32& num2);
 	int32 Mul(int32 num1, int32 num2);
 	float Div(int32 num1, int32 num2);
 
@@ -82,4 +92,8 @@ public:
 	FString GetFullName(FString FirstName, FString LastName);
 
 	void MultiplicationTable();
+
+	UPROPERTY(EditAnywhere, Category=CodeVariable)
+	class APointerTest* pointerTest;
+	// TArray<class APointerTest*> pointerTest;
 };
