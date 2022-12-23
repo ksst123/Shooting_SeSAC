@@ -21,6 +21,8 @@ AShootingFlight::AShootingFlight()
 	RootComponent = BoxComponent; // == SetRootComponent(BoxComponent);
 	// 박스 콜리전 크기를 (50, 50, 50) 으로 설정
 	BoxComponent->SetBoxExtent(FVector(50));
+	// 박스 콜리전의 충돌 처리 프리셋을 PlayerPreset 으로 설정
+	BoxComponent->SetCollisionProfileName(TEXT("PlayerPreset"));
 
 
 	// 메시 컴포넌트 생성

@@ -4,6 +4,7 @@
 #include "Bullet.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Enemy.h"
 
 // Sets default values
 ABullet::ABullet()
@@ -18,6 +19,7 @@ ABullet::ABullet()
 	RootComponent = BoxComponent;
 	BoxComponent->SetBoxExtent(FVector(50.0f));
 	BoxComponent->SetWorldScale3D(FVector(0.75f, 0.25f, 1.0f));
+	BoxComponent->SetCollisionProfileName(TEXT("BulletPreset"));
 
 	// 스태틱 메시 생성
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
@@ -31,6 +33,11 @@ void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// 충돌(overlap) 발생 시 실행할 함수를 연결
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnOverlap);
+
+	// 오버랩 이벤트가 발생하도록 설정
+	BoxComponent->SetGenerateOverlapEvents(true);
 }
 
 // Called every frame
@@ -43,5 +50,19 @@ void ABullet::Tick(float DeltaTime)
 	direction = GetActorForwardVector();
 	FVector dir = GetActorLocation() + direction * MoveSpeed * DeltaTime;
 	SetActorLocation(dir);
+}
+
+// OtherActor 로 대상 액터 정보, HitComponent 로 충돌 대상 컴포넌트 정보?
+void ABullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+	
+	// 만일 충돌 대상이 Enemy 라면
+	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
+	if (Enemy != nullptr)
+	{
+		// Enemy 제거
+		Enemy->Destroy();
+		// Bullet 스스로도 제거
+		Destroy();
+	}
 }
 
