@@ -30,6 +30,12 @@ void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//// 만일 IsSpawn의 값이 False 라면 Tick 함수를 종료
+	//if (!IsSpawn)
+	//{
+	//	return;
+	//}
+
 	// 경과된 시간을 누적
 	CurrentTime += DeltaTime;
 	// 만일 누적 시간이 SpawnTime 이상일 경우

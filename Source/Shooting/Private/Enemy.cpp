@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ShootingFlight.h"
 #include "EngineUtils.h"
+#include "ShootingGameModeBase.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -103,6 +104,16 @@ void AEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 	{
 		// 플레이어 제거
 		PlayerFlight->Destroy();
+
+		// MenuWidget을 생성하는 함수를 실행
+		AShootingGameModeBase* GameMode = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+		if (GameMode != nullptr)
+		{
+			GameMode->ShowMenu();
+		}
+
+		// 플레이어와 충돌 시 플레이어 색 변경
+		// PlayerFlight->ReserveChangeColor(0.1f);
 
 		// 스스로도 제거
 		Destroy();

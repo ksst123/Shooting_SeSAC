@@ -32,10 +32,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bulltet Settings");
 	float MoveSpeed = 1000.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category="Bullet Settings")
+	class UParticleSystem* ExplosionEffect;
+
 	// Delegate로 연결할 함수는 반드시 UFCUNTION 으로 선언해야 한다
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
 	FVector direction;
+	FTimerHandle TimerHandler;
+
+	void DestroyBulletSelf();
 };

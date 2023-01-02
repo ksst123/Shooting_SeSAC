@@ -51,7 +51,17 @@ public:
 	class UInputAction* IA_FireBullet;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
+	class UInputAction* IA_Boost;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
 	class UInputMappingContext* IMC_MyMapping;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
+	class USoundBase* BulletFireSound;
+
+	// void ChangeColor();
+	void ChangeOriginColor();
+	void ReserveChangeColor(float time);
 
 private:
 	// legacy input 방식 함수들
@@ -74,6 +84,17 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void FireBullet();
 
+	UFUNCTION(BlueprintCallable)
+	void BoostStarted();
+
+	UFUNCTION(BlueprintCallable)
+	void BoostFinished();
+
 	float h, v;
 	FVector direction;
+	FLinearColor InitColor;
+	FTimerHandle ColorTimer;
+	// UMaterialInstanceDynamic* MyMaterial;
+	UMaterialInstanceDynamic* DynamicMaterial;
+	float OriginMoveSpeed;
 };

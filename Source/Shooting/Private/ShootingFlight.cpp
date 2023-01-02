@@ -8,6 +8,7 @@
 #include "GameFramework/Controller.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AShootingFlight::AShootingFlight()
@@ -45,6 +46,7 @@ AShootingFlight::AShootingFlight()
 void AShootingFlight::BeginPlay()
 {
 	Super::BeginPlay();
+	OriginMoveSpeed = MoveSpeed;
 	
 	// 플레이어 컨트롤러를 캐스팅
 	// APlayerController* PlayerController = Cast<APlayerController>(Controller);
@@ -57,6 +59,30 @@ void AShootingFlight::BeginPlay()
 			SubSystem->AddMappingContext(IMC_MyMapping, 0);
 		}
 	}
+
+	// 현재 색상 값 저장
+	/*PlayerMaterial = Cast<UMaterialInstanceDynamic>(MeshComponent->GetMaterial(0));
+	FHashedMaterialParameterInfo Param;
+
+	PlayerMaterial->GetVectorParameterValue(Param, InitColor);*/
+
+	// 현재 색상 값 저장
+	UMaterialInterface* PlayerMaterial = MeshComponent->GetMaterial(0);
+	FHashedMaterialParameterInfo Param = FHashedMaterialParameterInfo(TEXT("Color"));
+	// Material Interface 에서 벡터 파라미터 값을 InitColor 변수에 저장
+	PlayerMaterial->GetVectorParameterValue(Param, InitColor);
+
+	UE_LOG(LogTemp, Warning, TEXT("R: %f, G: %f, B: %f"), InitColor.R, InitColor.G, InitColor.B);
+
+	// material interface PlayerMaterial 을 기준으로 Material instance dynamic 개체를 생성
+	DynamicMaterial = UMaterialInstanceDynamic::Create(PlayerMaterial, this);
+
+	// 생성한 dynamic material 을 메시 컴포넌트에 설정
+	if (DynamicMaterial != nullptr)
+	{
+		MeshComponent->SetMaterial(0, DynamicMaterial);
+	}
+	
 }
 
 // Called every frame
@@ -70,7 +96,8 @@ void AShootingFlight::Tick(float DeltaTime)
 	// 방향*크기 = 속도, Scalar = 속도, Delta는 경과 중인 흐름 의미
 	direction.Normalize(); // 길이가 1인 벡터 = 단위 벡터
 	FVector dir = GetActorLocation() + (direction * MoveSpeed) * DeltaTime;
-	SetActorLocation(dir);
+	// bSweep = true, 이동 시 충돌 체가 있는지 Sweep(쓸고 간다) 여부 true 설정
+	SetActorLocation(dir, true);
 
 }
 
@@ -90,6 +117,9 @@ void AShootingFlight::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	EnhancedInputComponent->BindAction(IA_MoveVertical, ETriggerEvent::Completed, this, &AShootingFlight::MoveVertical);
 
 	EnhancedInputComponent->BindAction(IA_FireBullet, ETriggerEvent::Triggered, this, &AShootingFlight::FireBullet);
+
+	EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Triggered, this, &AShootingFlight::BoostStarted);
+	EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Completed, this, &AShootingFlight::BoostFinished);
 
 	//// Horizontal Axis 입력에 함수를 연결
 	//PlayerInputComponent->BindAxis("MoveHorizontal", this, &AShootingFlight::MoveHorizontal);
@@ -163,4 +193,61 @@ void AShootingFlight::FireBullet() {
 	// Bullet을 생성
 	// Bullet Blueprint 변수
 	GetWorld()->SpawnActor<ABullet>(BulletFactory, SpawnPosition, SpawnRotation, SpawnParam);
+
+	// Bullet 발사 효과음 실행
+	UGameplayStatics::PlaySound2D(this, BulletFireSound);
 }
+
+void AShootingFlight::BoostStarted() {
+	MoveSpeed *= 2;
+}
+
+void AShootingFlight::BoostFinished() {
+	MoveSpeed = OriginMoveSpeed;
+}
+
+// 충돌 시 색을 0.2초 동안 변경
+//void AShootingFlight::ChangeColor() {
+//	PlayerMaterial = Cast<UMaterialInstanceDynamic>(MeshComponent->GetMaterial(0));
+//	
+//	PlayerMaterial->SetVectorParameterValue(TEXT("Color"), FLinearColor::Red);
+//}
+
+void AShootingFlight::ChangeOriginColor() {
+	//DynamicMaterial = Cast<UMaterialInstanceDynamic>(MeshComponent->GetMaterial(0));
+
+	//DynamicMaterial->SetVectorParameterValue(TEXT("Color"), InitColor);
+	//// PlayerMaterial->SetVectorParameterValue(TEXT("Color"), FLinearColor(255, 0, 0, 255);
+
+	DynamicMaterial->SetVectorParameterValue(TEXT("Color"), InitColor);
+}
+
+void AShootingFlight::ReserveChangeColor(float time) {
+	// ChangeColor();
+	// 색상을 Red 로 변경
+	DynamicMaterial->SetVectorParameterValue(TEXT("Color"), (FVector4)FLinearColor::Red);
+
+	GetWorld()->GetTimerManager().SetTimer(ColorTimer, this, &AShootingFlight::ChangeOriginColor, time, false);
+}
+
+
+// Boost Toggle
+/*
+*	void APlyerFlight::Boost()
+*	{
+*		IsBoosting = !IsBoosting;
+* 
+*		if (IsBoosting)
+*		{
+*			MoveSpeed = MoveSpeedOrigin * 2;
+*		}
+*		else
+		{
+			MoveSpeed = MoveSpeedOrigin;
+		}
+
+		// 삼항연산
+		// MoveSpeed = IsBoosting ? MoveSpeedOrigin*2 : MoveSpeedOrigin;
+*
+* 
+*/

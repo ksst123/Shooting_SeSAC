@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditInstanceOnly, Category="Spawner Settings")
 	float SpawnTime = 2.0f;
 
+	UPROPERTY(EditInstanceOnly, Category = "Spawner Settings")
+	bool IsSpawn;
+
 	UPROPERTY(EditInstanceOnly, Category="Spawner Settings")
 	TSubclassOf<class AEnemy> EnemyFactory;
 
