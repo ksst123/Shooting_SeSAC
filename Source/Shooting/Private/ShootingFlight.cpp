@@ -209,10 +209,13 @@ void AShootingFlight::FireBullet() {
 
 
 		// 생성된 Bullet 인스턴스를 BulletAngle 만큼 일정하게 회전시킨다.
-		float ExtraBulletTotalAngle = (-0.5 * BulletAngle * (BulletCount - 1));
+		float ExtraBulletTotalAngle = -0.5 * BulletAngle * (BulletCount - 1);
 		FRotator OffsetAngle = FRotator(0.0f, 0.0f, ExtraBulletTotalAngle + BulletAngle * i);
 		// Bullet->SetActorRelativeRotation(GetActorRotation() + OffsetAngle);
-		Bullet->AddActorWorldRotation(OffsetAngle);
+		if (Bullet != nullptr)
+		{
+			Bullet->AddActorWorldRotation(OffsetAngle);
+		}
 	}
 	// Bullet 발사 효과음 실행
 	UGameplayStatics::PlaySound2D(this, BulletFireSound);

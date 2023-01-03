@@ -23,10 +23,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	class UStaticMeshComponent* MeshComponent;
-private:
+	UPROPERTY(EditAnywhere, Category = "Test Settings")
+	float MoveSpeed = 1000.0f;
 
-	float MoveSpeed = 500.0f;
+	UPROPERTY(EditAnywhere, Category = "Test Settings")
+	class UStaticMeshComponent* MeshComponent;
+
+private:
 	FVector MoveDirection;
 };

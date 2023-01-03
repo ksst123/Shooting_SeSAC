@@ -23,16 +23,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = "Spawner Settings")
-	float SpawnTime = 2.0f;
-
-	UPROPERTY(EditAnywhere, Category="Spawner Settings")
+	UPROPERTY(EditAnywhere, Category = "Test Settings")
 	class USceneComponent* SceneComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Spawner Settings")
-	class UArrowComponent* SpawnerDirection;
+	UPROPERTY(EditAnywhere, Category = "Test Settings")
+	float SpawnTime = 2.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Spawner Settings")
+	UPROPERTY(EditAnywhere, Category = "Test Settings")
+	class UArrowComponent* SpawnDirection;
+
+	UPROPERTY(EditAnywhere, Category = "Test Settings")
 	TSubclassOf<class ATestEnemyActor> EnemyFactory;
 
 private:

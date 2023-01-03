@@ -4,13 +4,15 @@
 #include "Test/TestEnemyActor.h"
 #include "Components/StaticMeshComponent.h"
 
+
 // Sets default values
 ATestEnemyActor::ATestEnemyActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
+	RootComponent = MeshComponent;
 
 	MoveDirection = -1 * GetActorUpVector();
 }
@@ -26,7 +28,7 @@ void ATestEnemyActor::BeginPlay()
 void ATestEnemyActor::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	FVector EnemyMove = GetActorLocation() + MoveDirection * DeltaTime * MoveSpeed;
+	FVector EnemyMove = GetActorLocation() + MoveDirection * MoveSpeed * DeltaTime;
 	SetActorLocation(EnemyMove);
 }
 
