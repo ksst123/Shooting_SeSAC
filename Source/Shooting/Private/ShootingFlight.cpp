@@ -190,7 +190,7 @@ void AShootingFlight::FireBullet() {
 		float BaseY = TotalSize * -0.5f;
 
 		// 기준 위치로 오프셋 벡터 생성
-		FVector Offset = FVector(0.0f, BaseY + 150 * i, 0.0f);
+		FVector Offset = FVector(0.0f, BaseY + BulletSpace * i, 0.0f);
 
 
 		// Bullet 생성 위치를 담을 변수 생성
