@@ -59,6 +59,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
 	class USoundBase* BulletFireSound;
 
+	UPROPERTY(EditAnywhere, Category = "Player Settings")
+	int32 BulletCount = 1;
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings")
+	float BulletSpace = 150;
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings")
+	float BulletAngle = 30;
+
 	// void ChangeColor();
 	void ChangeOriginColor();
 	void ReserveChangeColor(float time);

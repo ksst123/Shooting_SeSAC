@@ -181,21 +181,85 @@ void AShootingFlight::MoveVertical(const FInputActionValue& value) {
 
 void AShootingFlight::FireBullet() {
 		
-	// Bullet 생성 위치를 담을 변수 생성
-	FVector SpawnPosition = GetActorLocation() + GetActorUpVector() * 90.0f;
-	// Bullet 생성 시 회전값을 담을 변수 생성
-	// 에디터와는 다르게 코드에서는 FRotator(Pitch, Yaw, Roll) 순서
-	FRotator SpawnRotation = FRotator(90.0f, 0, 0);
-	FActorSpawnParameters SpawnParam;
-	// 오브젝트 생성 시 생성 위치에 충돌 가능한 다른 오브젝트가 있을 경우에 어떻게 할 것인지 설정하는 옵션
-	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	for (int32 i = 0; i < BulletCount; i++)
+	{
+		// 총알의 전체 간격
+		float TotalSize = (BulletCount - 1) * BulletSpace;
 
-	// Bullet을 생성
-	// Bullet Blueprint 변수
-	GetWorld()->SpawnActor<ABullet>(BulletFactory, SpawnPosition, SpawnRotation, SpawnParam);
+		// 기준 위치
+		float BaseY = TotalSize * -0.5f;
 
+		// 기준 위치로 오프셋 벡터 생성
+		FVector Offset = FVector(0.0f, BaseY + 150 * i, 0.0f);
+
+
+		// Bullet 생성 위치를 담을 변수 생성
+		FVector SpawnPosition = GetActorLocation() + GetActorUpVector() * 90.0f;
+		SpawnPosition += Offset;
+		// Bullet 생성 시 회전값을 담을 변수 생성
+		// 에디터와는 다르게 코드에서는 FRotator(Pitch, Yaw, Roll) 순서
+		FRotator SpawnRotation = FRotator(90.0f, 0, 0);
+		FActorSpawnParameters SpawnParam;
+		// 오브젝트 생성 시 생성 위치에 충돌 가능한 다른 오브젝트가 있을 경우에 어떻게 할 것인지 설정하는 옵션
+		SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		// Bullet을 생성
+		// Bullet Blueprint 변수
+		ABullet* Bullet = GetWorld()->SpawnActor<ABullet>(BulletFactory, SpawnPosition, SpawnRotation, SpawnParam);
+
+
+		// 생성된 Bullet 인스턴스를 BulletAngle 만큼 일정하게 회전시킨다.
+		float ExtraBulletTotalAngle = (-0.5 * BulletAngle * (BulletCount - 1));
+		FRotator OffsetAngle = FRotator(0.0f, 0.0f, ExtraBulletTotalAngle + BulletAngle * i);
+		// Bullet->SetActorRelativeRotation(GetActorRotation() + OffsetAngle);
+		Bullet->AddActorWorldRotation(OffsetAngle);
+	}
 	// Bullet 발사 효과음 실행
 	UGameplayStatics::PlaySound2D(this, BulletFireSound);
+
+	
+
+	/*float BulletHalfSpace = BulletSpace / 2;
+	int32 BulletHalfCount = BulletCount / 2;
+
+		if (BulletCount == 1)
+		{
+			FVector SpawnPosition = GetActorLocation() + GetActorUpVector() * 90.0f;
+			FRotator SpawnRotation = FRotator(90.0f, 0, 0);
+			FActorSpawnParameters SpawnParam;
+			GetWorld()->SpawnActor<ABullet>(BulletFactory, SpawnPosition, SpawnRotation, SpawnParam);
+			UGameplayStatics::PlaySound2D(this, BulletFireSound);
+		}
+		else if (BulletCount % 2 == 0)
+		{
+			FVector ExtraSpawnPostion;
+			float ExtraSpawnStartPosition = BulletHalfSpace + (BulletSpace * (BulletHalfCount / 2));
+			ExtraSpawnPostion = FVector(0.0f, -1 * ExtraSpawnStartPosition, 0.0f);
+			for (int i = 1; i <= BulletCount; i++)
+			{
+				FVector SpawnPosition = GetActorLocation() + GetActorUpVector() * 90.0f;
+				FRotator SpawnRotation = FRotator(90.0f, 0, 0);
+				FActorSpawnParameters SpawnParam;
+				GetWorld()->SpawnActor<ABullet>(BulletFactory, SpawnPosition + ExtraSpawnPostion, SpawnRotation, SpawnParam);
+				ExtraSpawnPostion += FVector(0.0f, BulletSpace, 0.0f);
+			}
+			UGameplayStatics::PlaySound2D(this, BulletFireSound);
+		}
+		else if (BulletCount % 2 != 0)
+		{
+			FVector ExtraSpawnPostion;
+			float ExtraSpawnStartPosition = (BulletSpace * (BulletHalfCount));
+			ExtraSpawnPostion = FVector(0.0f, -1 * ExtraSpawnStartPosition, 0.0f);
+			for (int i = 1; i <= BulletCount; i++)
+			{
+				FVector SpawnPosition = GetActorLocation() + GetActorUpVector() * 90.0f;
+				FRotator SpawnRotation = FRotator(90.0f, 0, 0);
+				FActorSpawnParameters SpawnParam;
+				GetWorld()->SpawnActor<ABullet>(BulletFactory, SpawnPosition + ExtraSpawnPostion, SpawnRotation, SpawnParam);
+				ExtraSpawnPostion += FVector(0.0f, BulletSpace, 0.0f);
+			}
+			UGameplayStatics::PlaySound2D(this, BulletFireSound);
+		}*/
 }
 
 void AShootingFlight::BoostStarted() {
