@@ -23,6 +23,7 @@ ATrap::ATrap()
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetRelativeScale3D(FVector(4.0f));
 	MeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -200.0f));
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	// 충돌 프리셋을 "TrapPreset" 으로 설정
 	SphereComponent->SetCollisionProfileName(TEXT("TrapPreset"));

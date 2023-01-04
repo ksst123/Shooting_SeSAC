@@ -25,6 +25,8 @@ AShieldActor::AShieldActor()
 	BoxComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	BoxComponent->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Overlap);
 	BoxComponent->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Overlap);
+
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned
