@@ -68,6 +68,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Player Settings")
 	float BulletAngle = 30;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
+	bool IsTrapped = false;
+
 	// void ChangeColor();
 	void ChangeOriginColor();
 	void ReserveChangeColor(float time);

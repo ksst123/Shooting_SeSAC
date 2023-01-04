@@ -181,6 +181,11 @@ void AShootingFlight::MoveVertical(const FInputActionValue& value) {
 
 void AShootingFlight::FireBullet() {
 		
+	if (IsTrapped)
+	{
+		return;
+	}
+
 	for (int32 i = 0; i < BulletCount; i++)
 	{
 		// 총알의 전체 간격
