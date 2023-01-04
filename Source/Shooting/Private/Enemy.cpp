@@ -31,12 +31,21 @@ AEnemy::AEnemy()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetRelativeLocation(FVector(0, 0, -50.0f));
+
+
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 게임 모드의 EnemyArray 배열에 자기 자신을 넣는다(가리키게 한다).
+	AShootingGameModeBase* MyGM = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (MyGM != nullptr)
+	{
+		MyGM->EnemyArray.Add(this);
+	}
 
 	// 플레이어 제거 함수 연결
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlap);
@@ -117,6 +126,22 @@ void AEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 
 		// 스스로도 제거
 		Destroy();
+	}
+}
+
+void AEnemy::DestroyMyself() {
+	
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation(), GetActorRotation(), true);
+	Destroy();
+}
+
+void AEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason) {
+
+	// 자기 자신을 배열에서 제거
+	AShootingGameModeBase* MyGM = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (MyGM != nullptr)
+	{
+		MyGM->EnemyArray.Remove(this);
 	}
 }
 

@@ -21,6 +21,8 @@ public:
 	UPROPERTY(EditAnywhere, Category="UI Settings")
 	TSubclassOf<class UMenuWidget> MenuWidget;
 
+	TArray<class AEnemy*> EnemyArray;
+
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE int32 GetCurrentScore() { return CurrentScore; }
 
@@ -32,6 +34,8 @@ public:
 	void AddScore(int32 point);
 
 	void ShowMenu();
+
+
 
 private:
 	int32 CurrentScore = 0;

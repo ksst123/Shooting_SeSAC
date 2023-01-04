@@ -54,6 +54,9 @@ public:
 	class UInputAction* IA_Boost;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
+	class UInputAction* IA_ULT;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
 	class UInputMappingContext* IMC_MyMapping;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player Settings")
@@ -101,6 +104,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void BoostFinished();
+
+	UFUNCTION(BlueprintCallable)
+	void ExplosionAll();
 
 	float h, v;
 	FVector direction;

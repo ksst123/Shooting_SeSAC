@@ -31,6 +31,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Trap Settings")
 	class UStaticMeshComponent* MeshComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Trap Settings")
+	float TeleportTime = 5.0f;
 
 	// ComponentBeginOverlap 함수에 연결할 InTrap 함수 선언
 	UFUNCTION()
@@ -41,5 +43,4 @@ public:
 
 private:
 	float CurrentTime = 0.0f;
-	float TeleportTime = 5.0f;
 };

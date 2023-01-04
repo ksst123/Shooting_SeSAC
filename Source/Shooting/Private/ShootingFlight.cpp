@@ -9,6 +9,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Enemy.h"
+#include "EngineUtils.h"
+#include "ShootingGameModeBase.h"
 
 // Sets default values
 AShootingFlight::AShootingFlight()
@@ -120,6 +123,8 @@ void AShootingFlight::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Triggered, this, &AShootingFlight::BoostStarted);
 	EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Completed, this, &AShootingFlight::BoostFinished);
+
+	EnhancedInputComponent->BindAction(IA_ULT, ETriggerEvent::Triggered, this, &AShootingFlight::ExplosionAll);
 
 	//// Horizontal Axis 입력에 함수를 연결
 	//PlayerInputComponent->BindAxis("MoveHorizontal", this, &AShootingFlight::MoveHorizontal);
@@ -271,11 +276,44 @@ void AShootingFlight::FireBullet() {
 }
 
 void AShootingFlight::BoostStarted() {
+	
 	MoveSpeed *= 2;
 }
 
 void AShootingFlight::BoostFinished() {
+	
 	MoveSpeed = OriginMoveSpeed;
+}
+
+void AShootingFlight::ExplosionAll() {
+
+	// 모든 에너미를 파괴(TActorIterator)
+	/*for (TActorIterator<AEnemy> itr(GetWorld()); itr; ++itr)
+	{
+		itr->DestroyMyself();
+	}*/
+
+
+	// 모든 에너미를 파괴(배열)
+	AShootingGameModeBase* MyGM = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (MyGM != nullptr)
+	{
+		/*for (AEnemy* enemy : MyGM->EnemyArray)
+		{
+			enemy->DestroyMyself();
+		}*/
+
+		for (int32 i = 0; i < MyGM->EnemyArray.Num(); i++)
+		{
+			// IsValid를 통해 상속여부 및 Pendingkill 상태 확인
+			if (IsValid(MyGM->EnemyArray[i]))
+			{
+				MyGM->EnemyArray[i]->DestroyMyself();
+			}
+		}
+		// 배열을 한 번 초기화
+		MyGM->EnemyArray.Empty();
+	}
 }
 
 // 충돌 시 색을 0.2초 동안 변경

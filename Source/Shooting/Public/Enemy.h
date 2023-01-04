@@ -35,8 +35,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Enemy Settings")
 	int32 TraceRate = 30;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Enemy Settings")
+	class UParticleSystem* ExplosionEffect;
+
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void DestroyMyself();
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	FVector MoveDirection;

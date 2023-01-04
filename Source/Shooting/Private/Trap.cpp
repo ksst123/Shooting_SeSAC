@@ -53,11 +53,18 @@ void ATrap::Tick(float DeltaTime)
 	if (CurrentTime >= TeleportTime)
 	{
 		// 랜덤한 위치(벡터)를 설정
-		float RandomY = FMath::RandRange(-200, 200);
-		float RandomZ = FMath::RandRange(-600, 600);
+		float RandomY = FMath::RandRange(-200.0f, 200.0f);
+		float RandomZ = FMath::RandRange(-600.0f, 600.0f);
+
+		/*RandomLocation.Y = RandomY;
+		RandomLocation.Z = RandomZ;*/
 		FVector RandomLocation = FVector(0.0f, RandomY, RandomZ);
+		
+		/*FVector RandomLocation = FMath::VRand() * 500.0f;
+		RandomLocation.X = 0.0f;*/
 
 		// 해당 위치로 이동
+		// SetActorLocation(RandomLocation);
 		TeleportTo(RandomLocation, GetActorRotation());
 
 		// 누적 시간(CurrentTime) 초기화
