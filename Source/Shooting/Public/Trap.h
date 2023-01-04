@@ -38,4 +38,8 @@ public:
 
 	UFUNCTION()
 	void OutTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+private:
+	float CurrentTime = 0.0f;
+	float TeleportTime = 5.0f;
 };

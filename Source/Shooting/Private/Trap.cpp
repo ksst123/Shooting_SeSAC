@@ -48,6 +48,28 @@ void ATrap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	// 현재 누적 시간(CurrentTime)이 지정된 시간(TeleportTime)에 도달하면
+	if (CurrentTime >= TeleportTime)
+	{
+		// 랜덤한 위치(벡터)를 설정
+		float RandomY = FMath::RandRange(-200, 200);
+		float RandomZ = FMath::RandRange(-600, 600);
+		FVector RandomLocation = FVector(0.0f, RandomY, RandomZ);
+
+		// 해당 위치로 이동
+		TeleportTo(RandomLocation, GetActorRotation());
+
+		// 누적 시간(CurrentTime) 초기화
+		CurrentTime = 0.0f;
+	}
+	// 그렇지 않다면
+	else
+	{
+		// 시간을 누적
+		CurrentTime += DeltaTime;
+	}
+
 }
 
 void ATrap::InTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
