@@ -27,7 +27,7 @@ public:
 	float SpawnTime = 2.0f;
 
 	UPROPERTY(EditInstanceOnly, Category = "Spawner Settings")
-	bool IsSpawn;
+	bool IsSpawn = true;
 
 	UPROPERTY(EditInstanceOnly, Category="Spawner Settings")
 	TSubclassOf<class AEnemy> EnemyFactory;
@@ -38,6 +38,10 @@ public:
 	UPROPERTY(EditInstanceOnly, Category="Spawner Settings")
 	class UArrowComponent* SpawnDirection;
 
+	class AShootingGameModeBase* myGM;
+	int32 MyScore;
+
 private:
 	float CurrentTime = 0.0f;
+
 };

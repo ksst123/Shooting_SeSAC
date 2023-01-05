@@ -29,16 +29,25 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE int32 GetHighScore() { return HighScore; }
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABossEnemy> BossSpawner;
+
+	bool bIsAppearBoss = false;
+
 	virtual void BeginPlay() override;
 
 	void AddScore(int32 point);
 
 	void ShowMenu();
 
+	UFUNCTION()
+	void SpawnBoss();
 
+	void StopAllEnemySpawn();
 
-private:
 	int32 CurrentScore = 0;
+private:
+
 	int32 HighScore = 0;
 
 	// HighScore 파일을 저장할 절대 경로

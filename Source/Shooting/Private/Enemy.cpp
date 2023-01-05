@@ -41,11 +41,14 @@ void AEnemy::BeginPlay()
 	Super::BeginPlay();
 
 	// 게임 모드의 EnemyArray 배열에 자기 자신을 넣는다(가리키게 한다).
-	AShootingGameModeBase* MyGM = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+	/*AShootingGameModeBase* MyGM = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (MyGM != nullptr)
 	{
 		MyGM->EnemyArray.Add(this);
-	}
+	}*/
+
+	// 델리게이트에 연결
+
 
 	// 플레이어 제거 함수 연결
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlap);
@@ -57,6 +60,11 @@ void AEnemy::BeginPlay()
 	// 랜덤으로 정면 방향 또는 플레이어 방향으로 이동 결정
 	// 랜덤 확률은 변수를 이용해서 7:3(정면:플레이어) 비율
 	int32 RandomNum = FMath::RandRange(1, 100);
+
+	for (TActorIterator<AShootingFlight> itr(GetWorld()); itr; ++itr)
+	{
+		TraceTarget = *itr;
+	}
 
 	// 만일 값이 TraceRate 이하라면 플레이어를 향해서 (플레이어 위치 - 나의 위치 = 갈 방향)
 	if (RandomNum <= TraceRate)		
@@ -73,10 +81,10 @@ void AEnemy::BeginPlay()
 		// iterator 에서는 itr; 는 itr != nullptr;  조건식과 같다
 		// 1번째 방식은 어떤 형태의 클래스든 액터 형식으로 반환하기 때문에 캐스팅을 해줘야 하는데, 2번째는 캐스팅이 필요없다.
 
-		for (TActorIterator<AShootingFlight> itr(GetWorld()); itr; ++itr)
+		/*for (TActorIterator<AShootingFlight> itr(GetWorld()); itr; ++itr)
 		{
 			TraceTarget = *itr;
-		}
+		}*/
 		// float temp = TraceTarget->MoveSpeed;
 
 		if (TraceTarget != nullptr)
@@ -86,12 +94,22 @@ void AEnemy::BeginPlay()
 			// TargetDirection 의 길이가 길어서 이 상태에서 MoveSpeed와 곱하면 너무 커지므로 정규화해서 1짜리 단위벡터로 만든다.
 			TargetDirection.Normalize();
 			MoveDirection = TargetDirection;
+
+			// 델리게이트에 에너미의 DestroyMeself 함수 연결
+			// 에너미 일부만 터지는 이유는, 플레이어를 쫓아오는 에너미만 대상으로 하기 때문에
+			// TraceTarget->PlayerBomb.AddDynamic(this, &AEnemy::DestroyMyself);
 		}
 	}
 	else // 그렇지 않으면 정면 방향
 	{
 		MoveDirection = GetActorForwardVector();
 	}
+
+	if (TraceTarget != nullptr)
+	{
+		TraceTarget->OnEnemyDirModify.AddDynamic(this, &AEnemy::SetNewDirection);
+	}
+	
 }
 
 // Called every frame
@@ -135,13 +153,28 @@ void AEnemy::DestroyMyself() {
 	Destroy();
 }
 
+void AEnemy::SetNewDirection(FVector NewDirection) {
+
+	// 이동 방향을 NewDirection으로 변경
+	MoveDirection = NewDirection;
+}
+
 void AEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 
 	// 자기 자신을 배열에서 제거
-	AShootingGameModeBase* MyGM = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+	/*AShootingGameModeBase* MyGM = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (MyGM != nullptr)
 	{
 		MyGM->EnemyArray.Remove(this);
+	}*/
+
+	// 델리게이트에 걸어놓은 자기 함수를 제거
+	// TraceTarget->PlayerBomb.RemoveDynamic(this, &AEnemy::DestroyMyself);
+
+	if (TraceTarget != nullptr)
+	{
+		TraceTarget->OnEnemyDirModify.RemoveDynamic(this, &AEnemy::SetNewDirection);
 	}
+	// TraceTarget->EnemyDirModifier.RemoveDynamic(this, &AEnemy::SetNewDirection);
 }
 

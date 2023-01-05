@@ -5,6 +5,9 @@
 #include "MainWidget.h"
 #include "MenuWidget.h"
 #include "kismet/GameplayStatics.h"
+#include "BossEnemy.h"
+#include "EngineUtils.h"
+#include "EnemySpawner.h"
 
 void AShootingGameModeBase::BeginPlay() {
 	
@@ -63,6 +66,18 @@ void AShootingGameModeBase::AddScore(int32 point) {
 		UE_LOG(LogTemp, Warning, TEXT("%s"), isSaved ? TEXT("True") : TEXT("False"));
 	}
 	
+	// 현재 점수가 30점 이상이고 보스가 아직 스폰되지 않았으면
+	if (CurrentScore >= 30 && !bIsAppearBoss)
+	{
+		bIsAppearBoss = true;
+
+		// 4초 뒤에 보스 생성
+		FTimerHandle BossSpawnTimer;
+		GetWorld()->GetTimerManager().SetTimer(BossSpawnTimer, this, &AShootingGameModeBase::SpawnBoss, 4, false);
+
+		// 모든 에너미 스폰을 중단
+		StopAllEnemySpawn();
+	}
 
 	// 현재 점수를 위젯의 ScoreText 텍스트 블록에 반영
 	if (MainUI != nullptr)
@@ -89,4 +104,17 @@ void AShootingGameModeBase::ShowMenu() {
 
 	// 마우스 커서 화면에 출력
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+}
+
+void AShootingGameModeBase::SpawnBoss() {
+
+	GetWorld()->SpawnActor<ABossEnemy>(BossSpawner, FVector(0.0f, 0.0f, 700.0f), FRotator::ZeroRotator);
+}
+
+void AShootingGameModeBase::StopAllEnemySpawn() {
+
+	for (TActorIterator<AEnemySpawner> spawner(GetWorld()); spawner; ++spawner)
+	{
+		spawner->IsSpawn = false;
+	}
 }

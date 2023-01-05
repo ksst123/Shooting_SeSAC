@@ -80,7 +80,7 @@ void ABullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherA
 		AGameModeBase* GameMode =  UGameplayStatics::GetGameMode(this);
 		// AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
 		AShootingGameModeBase* ShootingGameMode = Cast<AShootingGameModeBase>(GameMode);
-		ShootingGameMode->AddScore(1);
+		ShootingGameMode->AddScore(10);
 		// UE_LOG(LogTemp, Warning, TEXT("Score: %d"), ShootingGameMode->GetCurrentScore());
 
 		// Bullet 스스로도 제거

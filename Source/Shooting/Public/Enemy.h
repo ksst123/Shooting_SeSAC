@@ -33,7 +33,7 @@ public:
 	float MoveSpeed = 500.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category="Enemy Settings")
-	int32 TraceRate = 30;
+	int32 TraceRate = 50;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Enemy Settings")
 	class UParticleSystem* ExplosionEffect;
@@ -41,7 +41,13 @@ public:
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+
+	UFUNCTION() // 델리게이트에 연결하기 위해서
 	void DestroyMyself();
+
+	UFUNCTION()
+	void SetNewDirection(FVector NewDirection);
+
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 

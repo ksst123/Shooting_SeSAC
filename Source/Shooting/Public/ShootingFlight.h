@@ -8,6 +8,13 @@
 
 #include "ShootingFlight.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FULTbomb);
+
+// 벡터를 인자로 넘겨받는 델리게이트 선언(FDirectionModifier)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDirectionModifier, FVector, NewDirection);
+
+
 UCLASS()
 class SHOOTING_API AShootingFlight : public APawn
 {
@@ -77,6 +84,9 @@ public:
 	// void ChangeColor();
 	void ChangeOriginColor();
 	void ReserveChangeColor(float time);
+
+	FULTbomb PlayerBomb;
+	FDirectionModifier OnEnemyDirModify;
 
 private:
 	// legacy input 방식 함수들
