@@ -16,6 +16,9 @@ void UMainWidget::PrintCurrentScore() {
 		FText ScoreToText = FText::AsNumber(MyGameMode->GetCurrentScore());
 		// 해서 ScoreText 텍스트 블록의 값으로 설정
 		ScoreText->SetText(ScoreToText);
+
+		// ScoreAnim 애니메이션을 실행
+		PlayAnimation(ScoreAnim, 0.0f, 1, EUMGSequencePlayMode::Forward);
 	}
 }
 

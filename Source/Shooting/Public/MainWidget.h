@@ -22,6 +22,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player UI|Score", meta=(BindWidget))
 	class UTextBlock* HighScoreText;
 
+	UPROPERTY(EditAnywhere, Category = "Player UI|Score", meta=(BindWidgetAnim), Transient)
+	class UWidgetAnimation* ScoreAnim;
+
 	void PrintCurrentScore();
 	void PrintHighScore();
 };

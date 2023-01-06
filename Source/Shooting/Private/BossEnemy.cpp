@@ -4,6 +4,8 @@
 #include "BossEnemy.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "EnemyBullet.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ABossEnemy::ABossEnemy()
@@ -32,6 +34,9 @@ void ABossEnemy::BeginPlay()
 	
 	StartLocation = GetActorLocation();
 	TargetLocation = FVector(0.0f, 0.0f, 200.0f);
+
+	/*FTimerHandle Pattern1Timer;
+	GetWorld()->GetTimerManager().SetTimer(Pattern1Timer, this, &ABossEnemy::BossAttack1, 5, true, 3);*/
 }
 
 // Called every frame
@@ -64,13 +69,67 @@ void ABossEnemy::Tick(float DeltaTime)
 
 
 	// 현재 위치에서 (0.0f, 0.0f, 200.0f) 위치까지 이동(선형 보간)
-	TestValue += DeltaTime;
+	TestValue += DeltaTime * 0.5;
 	
 	// TestValue가 어떤 범위 안에서 벗어나지 못하도록(Clamp) 한다
 	TestValue = FMath::Clamp(TestValue, 0.0f, 1.0f);
 
 	FVector Result = FMath::Lerp(StartLocation, TargetLocation, TestValue);
 	SetActorLocation(Result);
+
+	if (CurrentTime >= PatternDelay)
+	{
+		BossAttack1(15.0f, 10);
+		CurrentTime = 0;
+	}
+	else
+	{
+		CurrentTime += DeltaTime;
+	}
 }
 	
+void ABossEnemy::BossAttack1(float angle, int32 count) {
+
+	// 벡터 이용
+	// angle 간격으로 count 수 만큼 총알을 생성
+	/*BulletSpawnPostion = GetActorLocation() + GetActorUpVector() * -100.0f;
+	float ExtraBossBulletAngle = (count - 1) * angle * -0.5f;
+	FRotator BulletSpawnRotation = FRotator(-90.0f, 0.0f, 0.0f);
+	for (int32 i = 0; i < count; i++)
+	{
+		AEnemyBullet* EnemyBullet = GetWorld()->SpawnActor<AEnemyBullet>(BossBullet, BulletSpawnPostion, BulletSpawnRotation);
+		FRotator AngleOffset = FRotator(0.0f, 0.0f, ExtraBossBulletAngle + angle * i);
+
+		if (EnemyBullet != nullptr)
+		{
+			EnemyBullet->AddActorWorldRotation(AngleOffset);
+		}
+	}*/
+
+
+
+	// 수학 이용
+	// angle 간격으로 count 수 만큼 총알을 생성
+	// 시작 각도 = 270 - (angle * (count - 1) * 0.5
+	float StartAngle = 270 - (angle * (count - 1) * 0.5f);
+
+	for (int32 i = 0; i < count; i++)
+	{
+		// 기본 좌표 (0, rcos@, rsin@)
+		FVector BulletBase = FVector(0.0f, 
+			200 * FMath::Cos(FMath::DegreesToRadians(StartAngle + angle * i)), 
+			200 * FMath::Sin(FMath::DegreesToRadians(StartAngle + angle * i)));
+
+		AEnemyBullet* EnemyBullet = GetWorld()->SpawnActor<AEnemyBullet>(BossBullet, GetActorLocation() + BulletBase, FRotator(-90.0f, 0.0f, 0.0f));
+		EnemyBullet->SetDirection(BulletBase.GetSafeNormal());
+		// EnemyBullet->AddActorLocalRotation(FRotator(0.0f, StartAngle + angle * i, 0.0f));
+
+
+		//AEnemyBullet* EnemyBullet = GetWorld()->SpawnActor<AEnemyBullet>(BossBullet, GetActorLocation() + BulletBase, FRotator(-90.0f, 0.0f, 0.0f));
+		//// UpVector 축을 BulletBase 방향으로 회전시켰을 때 Rotator 값을 계산
+		FRotator rot = UKismetMathLibrary::MakeRotFromZX(EnemyBullet->GetActorUpVector(), BulletBase.GetSafeNormal());
+		EnemyBullet->SetActorRotation(rot);
+		//// EnemyBullet->SetDirection(EnemyBullet->GetActorForwardVector());
+	}
+}
 

@@ -51,6 +51,8 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+
+
 private:
 	FVector MoveDirection;
 	class AShootingFlight* TraceTarget;

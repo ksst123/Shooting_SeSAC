@@ -153,11 +153,7 @@ void AEnemy::DestroyMyself() {
 	Destroy();
 }
 
-void AEnemy::SetNewDirection(FVector NewDirection) {
 
-	// 이동 방향을 NewDirection으로 변경
-	MoveDirection = NewDirection;
-}
 
 void AEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 
@@ -178,3 +174,7 @@ void AEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 	// TraceTarget->EnemyDirModifier.RemoveDynamic(this, &AEnemy::SetNewDirection);
 }
 
+void AEnemy::SetNewDirection(FVector NewDirection) 	{
+
+	MoveDirection = NewDirection;
+}
