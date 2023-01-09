@@ -8,6 +8,7 @@
 #include "ShootingFlight.h"
 #include "EngineUtils.h"
 #include "ShootingGameModeBase.h"
+#include "MyShootingLibrary.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -117,9 +118,12 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-		// MoveDirection = GetActorForwardVector();
-		FVector EnemyMove = GetActorLocation() + MoveSpeed * DeltaTime * MoveDirection;
-		SetActorLocation(EnemyMove);
+	// MoveDirection = GetActorForwardVector();
+	/*FVector EnemyMove = GetActorLocation() + MoveSpeed * DeltaTime * MoveDirection;
+	SetActorLocation(EnemyMove);*/
+
+	// 우리가 만든 라이브러리 함수를 이용해서 이동시킨다
+	UMyShootingLibrary::MoveMyActor(this, MoveDirection, MoveSpeed, DeltaTime);
 }
 
 void AEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {

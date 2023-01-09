@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "EngineUtils.h"
 #include "ShootingGameModeBase.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AShootingFlight::AShootingFlight()
@@ -124,7 +125,7 @@ void AShootingFlight::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Triggered, this, &AShootingFlight::BoostStarted);
 	EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Completed, this, &AShootingFlight::BoostFinished);
 
-	EnhancedInputComponent->BindAction(IA_ULT, ETriggerEvent::Triggered, this, &AShootingFlight::ExplosionAll);
+	EnhancedInputComponent->BindAction(IA_ULT, ETriggerEvent::Triggered, this, &AShootingFlight::CheckEnemies);
 
 	//// Horizontal Axis 입력에 함수를 연결
 	//PlayerInputComponent->BindAxis("MoveHorizontal", this, &AShootingFlight::MoveHorizontal);
@@ -322,6 +323,30 @@ void AShootingFlight::ExplosionAll() {
 	// 모든 에너미 이동 방향 변경(델리게이트)
 	FVector NewDir = (-1 * GetActorUpVector()) + GetActorRightVector();
 	OnEnemyDirModify.Broadcast(NewDir);
+}
+
+void AShootingFlight::CheckEnemies() {
+
+	// 반경 5미터 이내에 있는 모든 AEnemy 액터들을 감지
+	// 감지된 에너미들의 정보를 담을 변수의 배열
+	TArray<FOverlapResult> EnemiesInfo;
+	FVector CenterLocation = GetActorLocation() + GetActorUpVector() * 700.f;
+	FQuat CenterRotation = GetActorRotation().Quaternion(); // GetActorQuat();
+	FCollisionObjectQueryParams params = ECC_GameTraceChannel2;
+	FCollisionShape CheckShape = FCollisionShape::MakeSphere(500.f);
+
+	GetWorld()->OverlapMultiByObjectType(EnemiesInfo, CenterLocation, CenterRotation, params, CheckShape);
+
+	// 체크된 모든 에너미의 이름을 출력
+	for (FOverlapResult EnemyInfo : EnemiesInfo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hitted: %s"), *EnemyInfo.GetActor()->GetName());
+
+		EnemyInfo.GetActor()->Destroy();
+	}
+
+	DrawDebugSphere(GetWorld(), CenterLocation, 700.f, 20, FColor::Yellow, false, 2.f);
+	
 }
 
 // 충돌 시 색을 0.2초 동안 변경

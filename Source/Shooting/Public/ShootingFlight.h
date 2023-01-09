@@ -118,6 +118,8 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void ExplosionAll();
 
+	void CheckEnemies();
+
 	float h, v;
 	FVector direction;
 	FLinearColor InitColor;
